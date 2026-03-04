@@ -1,9 +1,9 @@
 using MongoDB.Driver;
-using GigatronAplikacija.Models;
-using GigatronAplikacija.Configuration;
+using Api.Models;
+using Api.Configuration;
 using Microsoft.Extensions.Options;
 
-namespace GigatronAplikacija.Services
+namespace Api.Services
 {
     public class ProductService
     {
@@ -16,8 +16,11 @@ namespace GigatronAplikacija.Services
             _products = database.GetCollection<Product>(settings.Value.ProductsCollection);
         }
 
+        // public async Task<List<Product>> GetAllAsync() => 
+        //     await _products.Find(_ => true).ToListAsync();
+
         public async Task<List<Product>> GetAllAsync() => 
-            await _products.Find(_ => true).ToListAsync();
+            await _products.Find(p => p.IsActive).ToListAsync();
 
         public async Task<Product?> GetByIdAsync(string id) =>
             await _products.Find(p => p.Id == id).FirstOrDefaultAsync();
@@ -42,7 +45,6 @@ namespace GigatronAplikacija.Services
             return result.DeletedCount > 0;
         }
 
-        // Primer složenijeg filtriranja: Proizvodi određenog brenda skuplji od neke cene
         public async Task<List<Product>> GetFilteredAsync(string brand, decimal minPrice)
         {
             var filter = Builders<Product>.Filter.And(
@@ -52,13 +54,21 @@ namespace GigatronAplikacija.Services
             return await _products.Find(filter).ToListAsync();
         }
 
-        // Paginacija - bitno za prodavnice sa mnogo artikala
         public async Task<List<Product>> GetPaginatedAsync(int skip, int limit)
         {
             return await _products.Find(_ => true)
                 .Skip(skip)
                 .Limit(limit)
                 .ToListAsync();
+        }
+
+        public async Task UpdateRatingAsync(string productId, double avgRating, int reviewCount)
+        {
+            var filter = Builders<Product>.Filter.Eq(p => p.Id, productId);
+            var update = Builders<Product>.Update
+                .Set(p => p.AverageRating, avgRating)
+                .Set(p => p.ReviewCount, reviewCount);
+            await _products.UpdateOneAsync(filter, update);
         }
     }
 }

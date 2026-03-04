@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using GigatronAplikacija.Models;
-using GigatronAplikacija.Services;
+using Api.Models;
+using Api.Services;
 
-namespace GigatronAplikacija.Controllers
+namespace Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -96,6 +96,15 @@ namespace GigatronAplikacija.Controllers
                 return NotFound("Dodavanje adrese neuspešno. Korisnik nije pronađen.");
             }
             return Ok("Adresa uspešno dodata korisniku.");
+        }
+
+        [HttpDelete("{id}/address")]
+        public async Task<IActionResult> RemoveAddress(string id, [FromBody] string street)
+        {
+            var result = await _userService.RemoveAddressAsync(id, street);
+            if (!result)
+                return NotFound("Uklanjanje adrese neuspešno. Korisnik ili adresa nisu pronađeni.");
+            return Ok("Adresa uspešno uklonjena.");
         }
     }
 }

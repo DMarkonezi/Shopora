@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shopora – Checkout</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    .checkout-page { max-width: 1000px; margin: 0 auto; padding: 32px 24px; }
+    .page-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 8px; }
+    .page-subtitle { color: var(--text-muted); font-size: 0.875rem; margin-bottom: 28px; }
+
+    .checkout-layout { display: grid; grid-template-columns: 1fr 320px; gap: 24px; align-items: start; }
+
+    /* STEPS */
+    .steps { display: flex; align-items: center; gap: 0; margin-bottom: 28px; }
+    .step { display: flex; align-items: center; gap: 8px; font-size: 0.825rem; font-weight: 600; color: var(--text-muted); }
+    .step.active { color: var(--primary); }
+    .step.done { color: var(--success); }
+    .step-num { width: 26px; height: 26px; border-radius: 50%; border: 2px solid currentColor; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; flex-shrink: 0; }
+    .step.done .step-num { background: var(--success); border-color: var(--success); color: white; }
+    .step.active .step-num { background: var(--primary); border-color: var(--primary); color: white; }
+    .step-divider { flex: 1; height: 2px; background: var(--border); margin: 0 10px; }
+    .step-divider.done { background: var(--success); }
+
+    /* FORM CARD */
+    .form-card { background: white; border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); margin-bottom: 16px; }
+    .form-card h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-row.three { grid-template-columns: 2fr 1fr 1fr; }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 5px; color: var(--text); }
+    .form-group input, .form-group select { width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.875rem; outline: none; transition: border-color 0.2s; background: white; color: var(--text); }
+    .form-group input:focus, .form-group select:focus { border-color: var(--primary); }
+    .form-group input.error { border-color: #dc2626; }
+
+    /* PAYMENT OPTIONS */
+    .payment-options { display: flex; flex-direction: column; gap: 10px; }
+    .payment-option { display: flex; align-items: center; gap: 12px; padding: 14px; border: 2px solid var(--border); border-radius: 10px; cursor: pointer; transition: all 0.2s; }
+    .payment-option:hover { border-color: var(--primary); background: var(--primary-light); }
+    .payment-option.selected { border-color: var(--primary); background: var(--primary-light); }
+    .payment-option input[type="radio"] { accent-color: var(--primary); width: 16px; height: 16px; }
+    .payment-option-label { font-size: 0.875rem; font-weight: 600; }
+    .payment-option-desc { font-size: 0.78rem; color: var(--text-muted); }
+    .payment-icon { font-size: 1.3rem; }
+
+    /* ORDER SUMMARY */
+    .order-summary { background: white; border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); position: sticky; top: 88px; }
+    .order-summary h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+    .summary-items { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; max-height: 220px; overflow-y: auto; }
+    .summary-item { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .summary-item-name { font-size: 0.825rem; color: var(--text); flex: 1; }
+    .summary-item-qty { font-size: 0.75rem; color: var(--text-muted); background: var(--bg); padding: 2px 6px; border-radius: 4px; }
+    .summary-item-price { font-size: 0.875rem; font-weight: 700; color: var(--text); }
+    .summary-divider { height: 1px; background: var(--border); margin: 12px 0; }
+    .summary-row { display: flex; justify-content: space-between; font-size: 0.875rem; margin-bottom: 8px; color: var(--text-muted); }
+    .summary-row.total { font-size: 1.05rem; font-weight: 800; color: var(--text); padding-top: 10px; border-top: 1px solid var(--border); margin-top: 4px; }
+    .summary-row.total span:last-child { color: var(--primary); }
+
+    .place-order-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 14px; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 16px; transition: background 0.2s; }
+    .place-order-btn:hover { background: var(--primary-dark); }
+    .place-order-btn:disabled { background: var(--border); color: var(--text-muted); cursor: not-allowed; }
+
+    /* SUCCESS */
+    .success-screen { text-align: center; padding: 60px 24px; background: white; border-radius: var(--radius); box-shadow: var(--shadow); max-width: 520px; margin: 60px auto; }
+    .success-icon { font-size: 4rem; margin-bottom: 16px; }
+    .success-screen h2 { font-size: 1.5rem; font-weight: 800; margin-bottom: 8px; }
+    .success-screen p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 6px; }
+    .order-number { background: var(--primary-light); color: var(--primary); font-weight: 700; padding: 8px 16px; border-radius: 8px; display: inline-block; margin: 12px 0 24px; font-size: 0.95rem; }
+    .success-actions { display: flex; gap: 12px; justify-content: center; }
+    .btn-primary { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 10px; font-weight: 700; cursor: pointer; text-decoration: none; font-size: 0.9rem; }
+    .btn-secondary { background: none; border: 1px solid var(--border); color: var(--text); padding: 12px 24px; border-radius: 10px; font-weight: 600; cursor: pointer; text-decoration: none; font-size: 0.9rem; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-secondary:hover { border-color: var(--primary); color: var(--primary); }
+
+    .not-logged-in { text-align: center; padding: 80px 24px; background: white; border-radius: var(--radius); box-shadow: var(--shadow); }
+    .not-logged-in .icon { font-size: 3rem; margin-bottom: 16px; }
+    .not-logged-in h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+    .not-logged-in p { color: var(--text-muted); font-size: 0.875rem; margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">Shop<span>ora</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Shop</a></li>
+      <li><a href="orders.html">My Orders</a></li>
+      <li><a href="categories.html">Categories</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="cart-btn" onclick="openCart()">
+        🛒 <span class="cart-count" id="cartCount">0</span>
+      </button>
+      <button class="profile-btn" id="profileBtn" onclick="openProfileModal()"></button>
+      <button class="login-btn" id="loginBtn" onclick="openLoginModal()">Sign In</button>
+    </div>
+  </div>
+</nav>
+
+<div id="pageContent"></div>
+
+<!-- LOGIN MODAL -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeLoginModal()">✕</button>
+    <h2>Welcome back</h2>
+    <p class="subtitle">Sign in with your email address</p>
+    <div class="modal-error" id="loginError"></div>
+    <div class="form-group">
+      <label>Email Address</label>
+      <input type="email" id="loginEmail" placeholder="you@example.com" onkeydown="if(event.key==='Enter') submitLogin()" />
+    </div>
+    <button class="modal-submit" onclick="submitLogin()">Sign In</button>
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="modal-overlay" id="profileModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeProfileModal()">✕</button>
+    <div class="profile-header">
+      <div class="profile-avatar" id="profileAvatar"></div>
+      <div class="profile-info">
+        <h3 id="profileName"></h3>
+        <p id="profileEmail"></p>
+      </div>
+    </div>
+    <ul class="profile-menu">
+      <li><a href="orders.html">📦 My Orders</a></li>
+      <li><a href="profile.html">⚙️ My Profile</a></li>
+      <li><button class="logout-btn" onclick="logout()">🚪 Sign Out</button></li>
+    </ul>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/common.js" defer></script>
+<script src="js/checkout.js" defer></script>
+</body>
+</html>

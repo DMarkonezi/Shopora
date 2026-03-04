@@ -1,9 +1,9 @@
 using MongoDB.Driver;
-using GigatronAplikacija.Models;
-using GigatronAplikacija.Configuration;
+using Api.Models;
+using Api.Configuration;
 using Microsoft.Extensions.Options;
 
-namespace GigatronAplikacija.Services
+namespace Api.Services
 {
     public class UserService
     {
@@ -51,6 +51,15 @@ namespace GigatronAplikacija.Services
         {
             var filter = Builders<User>.Filter.Eq(u => u.Id, userId);
             var update = Builders<User>.Update.Push(u => u.Addresses, address);
+            var result = await _users.UpdateOneAsync(filter, update);
+            return result.ModifiedCount > 0;        
+        }
+
+        public async Task<bool> RemoveAddressAsync(string userId, string street)
+        {
+            var filter = Builders<User>.Filter.Eq(u => u.Id, userId);
+            var update = Builders<User>.Update.PullFilter(u => u.Addresses, 
+                a => a.Street == street);
             var result = await _users.UpdateOneAsync(filter, update);
             return result.ModifiedCount > 0;
         }

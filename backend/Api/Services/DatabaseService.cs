@@ -1,8 +1,8 @@
 using MongoDB.Driver;
-using GigatronAplikacija.Configuration;
+using Api.Configuration;
 using Microsoft.Extensions.Options;
 
-namespace GigatronAplikacija.Services
+namespace Api.Services
 {
     public class DatabaseService
     {
@@ -31,6 +31,7 @@ namespace GigatronAplikacija.Services
             await database.DropCollectionAsync("users");
             await database.DropCollectionAsync("orders");
             await database.DropCollectionAsync("reviews");
+            await database.DropCollectionAsync("categories");
         }
     }
 }

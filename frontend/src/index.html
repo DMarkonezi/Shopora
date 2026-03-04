@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shopora</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">Shop<span>ora</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">Shop</a></li>
+      <li><a href="orders.html">My Orders</a></li>
+      <li><a href="categories.html">Categories</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="cart-btn" onclick="openCart()">
+        🛒 <span class="cart-count" id="cartCount">0</span>
+      </button>
+      <button class="profile-btn" id="profileBtn" onclick="openProfileModal()"></button>
+      <button class="login-btn" id="loginBtn" onclick="openLoginModal()">Sign In</button>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <h1>Find Your Next Favorite Product</h1>
+  <p>Thousands of products, great prices, fast delivery</p>
+  <div class="hero-search">
+    <input type="text" id="searchInput" placeholder="Search products..." oninput="applyFilters()" />
+    <button onclick="applyFilters()">Search</button>
+  </div>
+</section>
+
+<div class="main-layout">
+  <aside class="sidebar">
+    <div class="filter-card">
+      <h3>Categories</h3>
+      <ul class="category-list" id="categoryList">
+        <li class="active" onclick="filterByCategory(null, this)">All Products</li>
+      </ul>
+    </div>
+
+    <div class="filter-card">
+      <h3>Filter</h3>
+      <select id="brandFilter"><option value="">All Brands</option></select>
+
+      <div class="price-row">
+        <input type="number" id="minPrice" placeholder="Min $" />
+        <span>–</span>
+        <input type="number" id="maxPrice" placeholder="Max $" />
+      </div>
+
+      <button class="apply-btn" onclick="applyFilters()">Apply Filters</button>
+      <button class="clear-btn" onclick="clearFilters()">Clear</button>
+    </div>
+  </aside>
+
+  <section class="products-section">
+    <div class="section-header">
+      <div>
+        <h2>All Products</h2>
+        <p id="productCount">Loading...</p>
+      </div>
+
+      <select class="sort-select" id="sortSelect" onchange="applyFilters()">
+        <option value="default">Sort: Default</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+        <option value="rating">Top Rated</option>
+      </select>
+    </div>
+
+    <div class="product-grid" id="productGrid"></div>
+    <div class="pagination" id="pagination"></div>
+  </section>
+</div>
+
+<!-- LOGIN MODAL -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeLoginModal()">✕</button>
+    <h2>Welcome back</h2>
+    <p class="subtitle">Sign in with your email address</p>
+    <div class="modal-error" id="loginError"></div>
+    <div class="form-group">
+      <label>Email Address</label>
+      <input type="email" id="loginEmail" placeholder="you@example.com"
+             onkeydown="if(event.key==='Enter') submitLogin()" />
+    </div>
+    <button class="modal-submit" onclick="submitLogin()">Sign In</button>
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="modal-overlay" id="profileModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeProfileModal()">✕</button>
+
+    <div class="profile-header">
+      <div class="profile-avatar" id="profileAvatar"></div>
+      <div class="profile-info">
+        <h3 id="profileName"></h3>
+        <p id="profileEmail"></p>
+      </div>
+    </div>
+
+    <ul class="profile-menu">
+      <li><a href="orders.html">📦 My Orders</a></li>
+      <li><a href="profile.html">⚙️ My Profile</a></li>
+      <li><button class="logout-btn" onclick="logout()">🚪 Sign Out</button></li>
+    </ul>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+
+<script src="js/common.js"></script>
+<script src="js/script.js"></script>
+</body>
+</html>

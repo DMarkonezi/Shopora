@@ -1,9 +1,9 @@
 using MongoDB.Driver;
-using GigatronAplikacija.Models;
-using GigatronAplikacija.Configuration;
+using Api.Models;
+using Api.Configuration;
 using Microsoft.Extensions.Options;
 
-namespace GigatronAplikacija.Services
+namespace Api.Services
 {
     public class OrderService
     {
@@ -26,7 +26,6 @@ namespace GigatronAplikacija.Services
             return order;
         }
 
-        // Napredna metoda: Vraća narudžbinu zajedno sa osnovnim podacima o kupcu (Denormalizacija/Join simulacija)
         public async Task<object?> GetOrderDetailsWithUserAsync(string orderId)
         {
             var order = await _orders.Find(o => o.Id == orderId).FirstOrDefaultAsync();
@@ -42,9 +41,22 @@ namespace GigatronAplikacija.Services
             };
         }
 
+        public async Task<bool> UpdateStatusAsync(string orderId, OrderStatus status)
+        {
+            var filter = Builders<Order>.Filter.Eq(o => o.Id, orderId);
+            var update = Builders<Order>.Update.Set(o => o.Status, status);
+            var result = await _orders.UpdateOneAsync(filter, update);
+            return result.ModifiedCount > 0;
+        }
+
         public async Task<List<Order>> GetUserOrdersAsync(string userId)
         {
             return await _orders.Find(o => o.UserId == userId).ToListAsync();
+        }
+
+        public async Task<List<Order>> GetByStatusAsync(OrderStatus status)
+        {
+            return await _orders.Find(o => o.Status == status).ToListAsync();
         }
     }
 }

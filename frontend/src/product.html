@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shopora – Product</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    .product-page { max-width: 1280px; margin: 0 auto; padding: 32px 24px; }
+
+    /* BREADCRUMB */
+    .breadcrumb { font-size: 0.825rem; color: var(--text-muted); margin-bottom: 24px; display: flex; align-items: center; gap: 6px; }
+    .breadcrumb a { color: var(--primary); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+
+    /* TOP SECTION */
+    .product-top { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+
+    .product-gallery { background: var(--primary-light); border-radius: var(--radius); height: 380px; display: flex; align-items: center; justify-content: center; font-size: 6rem; }
+
+    .product-details { display: flex; flex-direction: column; gap: 16px; }
+
+    .product-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--primary-light); color: var(--primary); font-size: 0.78rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; width: fit-content; }
+
+    .product-title { font-size: 1.7rem; font-weight: 800; line-height: 1.3; }
+
+    .product-brand-line { font-size: 0.875rem; color: var(--text-muted); }
+    .product-brand-line span { color: var(--primary); font-weight: 600; }
+
+    .rating-row { display: flex; align-items: center; gap: 10px; }
+    .rating-stars { color: #f59e0b; font-size: 1.1rem; }
+    .rating-text { font-size: 0.875rem; color: var(--text-muted); }
+    .rating-text strong { color: var(--text); }
+
+    .price-block { display: flex; align-items: baseline; gap: 12px; padding: 16px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .price-main { font-size: 2rem; font-weight: 800; color: var(--primary); }
+    .stock-badge { font-size: 0.8rem; font-weight: 600; padding: 4px 10px; border-radius: 20px; }
+    .stock-badge.in-stock { background: #dcfce7; color: #16a34a; }
+    .stock-badge.low-stock { background: #fef9c3; color: #ca8a04; }
+    .stock-badge.out-stock { background: #fee2e2; color: #dc2626; }
+
+    .product-description { font-size: 0.9rem; color: var(--text-muted); line-height: 1.7; }
+
+    .qty-row { display: flex; align-items: center; gap: 12px; }
+    .qty-label { font-size: 0.875rem; font-weight: 600; }
+    .qty-control { display: flex; align-items: center; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .qty-control button { background: none; border: none; padding: 8px 14px; cursor: pointer; font-size: 1rem; font-weight: 700; color: var(--primary); transition: background 0.2s; }
+    .qty-control button:hover { background: var(--primary-light); }
+    .qty-control span { padding: 8px 16px; font-weight: 600; border-left: 1px solid var(--border); border-right: 1px solid var(--border); min-width: 44px; text-align: center; }
+
+    .add-btn { flex: 1; background: var(--primary); color: white; border: none; padding: 14px 24px; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+    .add-btn:hover { background: var(--primary-dark); }
+    .add-btn:disabled { background: var(--border); color: var(--text-muted); cursor: not-allowed; }
+
+    /* BOTTOM SECTION */
+    .product-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+
+    .section-card { background: white; border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); }
+    .section-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+
+    /* SPECS */
+    .specs-table { width: 100%; border-collapse: collapse; }
+    .specs-table tr:nth-child(even) td { background: var(--bg); }
+    .specs-table td { padding: 9px 12px; font-size: 0.875rem; }
+    .specs-table td:first-child { color: var(--text-muted); font-weight: 600; width: 40%; }
+    .specs-table td:last-child { color: var(--text); font-weight: 500; }
+
+    /* REVIEWS */
+    .reviews-section { display: flex; flex-direction: column; gap: 0; }
+
+    .rating-summary { display: flex; align-items: center; gap: 20px; padding: 16px; background: var(--bg); border-radius: 10px; margin-bottom: 20px; }
+    .rating-big { text-align: center; }
+    .rating-big .number { font-size: 2.8rem; font-weight: 800; color: var(--primary); line-height: 1; }
+    .rating-big .out-of { font-size: 0.8rem; color: var(--text-muted); }
+    .rating-big .stars { color: #f59e0b; font-size: 1rem; }
+    .rating-bars { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+    .rating-bar-row { display: flex; align-items: center; gap: 8px; font-size: 0.78rem; color: var(--text-muted); }
+    .rating-bar { flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+    .rating-bar-fill { height: 100%; background: #f59e0b; border-radius: 3px; transition: width 0.4s; }
+
+    .review-list { display: flex; flex-direction: column; gap: 16px; max-height: 380px; overflow-y: auto; padding-right: 4px; }
+    .review-item { padding: 14px; border: 1px solid var(--border); border-radius: 10px; }
+    .review-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+    .reviewer-name { font-weight: 700; font-size: 0.875rem; }
+    .review-date { font-size: 0.75rem; color: var(--text-muted); }
+    .review-stars { color: #f59e0b; font-size: 0.9rem; margin-bottom: 6px; }
+    .review-comment { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
+    .no-reviews { text-align: center; padding: 32px; color: var(--text-muted); font-size: 0.875rem; }
+
+    .add-review { margin-top: 20px; border-top: 1px solid var(--border); padding-top: 20px; }
+    .add-review h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 12px; }
+    .star-picker { display: flex; gap: 6px; margin-bottom: 12px; }
+    .star-picker span { font-size: 1.5rem; cursor: pointer; color: var(--border); transition: color 0.15s; }
+    .star-picker span.active { color: #f59e0b; }
+    .review-textarea { width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.875rem; resize: vertical; min-height: 80px; outline: none; font-family: inherit; }
+    .review-textarea:focus { border-color: var(--primary); }
+    .submit-review-btn { margin-top: 10px; background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.875rem; }
+    .submit-review-btn:hover { background: var(--primary-dark); }
+    .login-to-review { font-size: 0.825rem; color: var(--text-muted); text-align: center; padding: 12px; background: var(--bg); border-radius: 8px; margin-top: 16px; }
+    .login-to-review a { color: var(--primary); font-weight: 600; cursor: pointer; }
+
+    .loading-page { text-align: center; padding: 100px 24px; color: var(--text-muted); }
+    .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto 16px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">Shop<span>ora</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Shop</a></li>
+      <li><a href="orders.html">My Orders</a></li>
+      <li><a href="categories.html">Categories</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="cart-btn" onclick="openCart()">
+        🛒 <span class="cart-count" id="cartCount">0</span>
+      </button>
+      <button class="profile-btn" id="profileBtn" onclick="openProfileModal()"></button>
+      <button class="login-btn" id="loginBtn" onclick="openLoginModal()">Sign In</button>
+    </div>
+  </div>
+</nav>
+
+<div id="pageContent">
+  <div class="loading-page"><div class="spinner"></div><p>Loading product...</p></div>
+</div>
+
+<!-- LOGIN MODAL -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeLoginModal()">✕</button>
+    <h2>Welcome back</h2>
+    <p class="subtitle">Sign in with your email address</p>
+    <div class="modal-error" id="loginError"></div>
+    <div class="form-group">
+      <label>Email Address</label>
+      <input type="email" id="loginEmail" placeholder="you@example.com" onkeydown="if(event.key==='Enter') submitLogin()" />
+    </div>
+    <button class="modal-submit" onclick="submitLogin()">Sign In</button>
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="modal-overlay" id="profileModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeProfileModal()">✕</button>
+    <div class="profile-header">
+      <div class="profile-avatar" id="profileAvatar"></div>
+      <div class="profile-info">
+        <h3 id="profileName"></h3>
+        <p id="profileEmail"></p>
+      </div>
+    </div>
+    <ul class="profile-menu">
+      <li><a href="orders.html">📦 My Orders</a></li>
+      <li><a href="profile.html">⚙️ My Profile</a></li>
+      <li><button class="logout-btn" onclick="logout()">🚪 Sign Out</button></li>
+    </ul>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/common.js"></script>
+<script src="js/product.js"></script>
+</body>
+</html>

@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using GigatronAplikacija.Models;
-using GigatronAplikacija.Services;
+using Api.Models;
+using Api.Services;
 
-namespace GigatronAplikacija.Controllers
+namespace Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

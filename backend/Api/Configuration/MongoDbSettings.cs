@@ -1,4 +1,4 @@
-namespace GigatronAplikacija.Configuration
+namespace Api.Configuration
 {
     public class MongoDbSettings
     {
@@ -9,5 +9,6 @@ namespace GigatronAplikacija.Configuration
         public string OrdersCollection { get; set; } = "orders";
         public string UsersCollection { get; set; } = "users";
         public string ReviewsCollection { get; set; } = "reviews";
+        public string CategoriesCollection { get; set; } = "categories";
     }
 }

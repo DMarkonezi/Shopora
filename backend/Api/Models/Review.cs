@@ -1,7 +1,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace GigatronAplikacija.Models;
+namespace Api.Models;
 public class Review
 {
     [BsonId]
@@ -14,9 +14,9 @@ public class Review
     [BsonRepresentation(BsonType.ObjectId)]
     public string? UserId { get; set; }
 
-    public string? UserName { get; set; } // Denormalizacija za brži prikaz
+    public string? UserName { get; set; }
 
-    public int Rating { get; set; } // 1-5
+    public int Rating { get; set; }
 
     public string? Comment { get; set; }
 

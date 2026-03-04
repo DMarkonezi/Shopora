@@ -1,7 +1,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace GigatronAplikacija.Models;
+namespace Api.Models;
 public class User
 {
     [BsonId]
@@ -18,7 +18,7 @@ public class User
     
     public string? Password { get; set; }
 
-    public List<Address> Addresses { get; set; } = new();
+    public List<Address> Addresses { get; set; } = [];
 
     public UserRole Role { get; set; } = UserRole.Customer;
 }

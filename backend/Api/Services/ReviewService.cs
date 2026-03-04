@@ -1,19 +1,21 @@
 using MongoDB.Driver;
-using GigatronAplikacija.Models;
-using GigatronAplikacija.Configuration;
+using Api.Models;
+using Api.Configuration;
 using Microsoft.Extensions.Options;
 
-namespace GigatronAplikacija.Services
+namespace Api.Services
 {
     public class ReviewService
     {
         private readonly IMongoCollection<Review> _reviews;
+        private readonly ProductService _productService;
 
-        public ReviewService(IOptions<MongoDbSettings> settings)
+        public ReviewService(IOptions<MongoDbSettings> settings, ProductService productService)
         {
             var client = new MongoClient(settings.Value.ConnectionString);
             var database = client.GetDatabase(settings.Value.DatabaseName);
             _reviews = database.GetCollection<Review>(settings.Value.ReviewsCollection);
+            _productService = productService;
         }
 
         public async Task<List<Review>> GetByProductAsync(string productId) =>
@@ -24,6 +26,12 @@ namespace GigatronAplikacija.Services
             review.Id = null;
             review.CreatedAt = DateTime.UtcNow;
             await _reviews.InsertOneAsync(review);
+
+            // Updateuj rating na proizvodu
+            var avgRating = await GetAverageRatingAsync(review.ProductId!);
+            var reviewCount = (int)await _reviews.CountDocumentsAsync(r => r.ProductId == review.ProductId);
+            await _productService.UpdateRatingAsync(review.ProductId!, avgRating, reviewCount);
+
             return review;
         }
 

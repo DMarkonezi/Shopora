@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shopora – My Profile</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    .profile-page { max-width: 900px; margin: 0 auto; padding: 32px 24px; }
+    .page-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 28px; }
+
+    .profile-layout { display: grid; grid-template-columns: 240px 1fr; gap: 24px; align-items: start; }
+
+    /* SIDEBAR */
+    .profile-sidebar { background: white; border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); position: sticky; top: 88px; }
+    .profile-avatar-big { width: 80px; height: 80px; border-radius: 50%; background: var(--primary); color: white; font-size: 2rem; font-weight: 800; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; }
+    .profile-sidebar-name { text-align: center; font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
+    .profile-sidebar-email { text-align: center; font-size: 0.78rem; color: var(--text-muted); margin-bottom: 20px; }
+    .profile-sidebar-menu { list-style: none; border-top: 1px solid var(--border); padding-top: 16px; display: flex; flex-direction: column; gap: 4px; }
+    .profile-sidebar-menu li button { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-radius: 8px; font-size: 0.875rem; font-weight: 500; color: var(--text-muted); background: none; border: none; cursor: pointer; width: 100%; transition: all 0.2s; }
+    .profile-sidebar-menu li button:hover { background: var(--primary-light); color: var(--primary); }
+    .profile-sidebar-menu li button.active { background: var(--primary-light); color: var(--primary); font-weight: 700; }
+
+    /* SECTIONS */
+    .profile-section { display: none; }
+    .profile-section.active { display: block; }
+
+    .section-card { background: white; border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); margin-bottom: 16px; }
+    .section-card h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 5px; }
+    .form-group input { width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.875rem; outline: none; transition: border-color 0.2s; }
+    .form-group input:focus { border-color: var(--primary); }
+    .form-group input:disabled { background: var(--bg); color: var(--text-muted); cursor: not-allowed; }
+
+    .save-btn { background: var(--primary); color: white; border: none; padding: 10px 24px; border-radius: 8px; font-weight: 700; font-size: 0.875rem; cursor: pointer; transition: background 0.2s; }
+    .save-btn:hover { background: var(--primary-dark); }
+
+    /* ADDRESSES */
+    .addresses-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+    .address-card { border: 2px solid var(--border); border-radius: 10px; padding: 16px; display: flex; justify-content: space-between; align-items: flex-start; transition: border-color 0.2s; }
+    .address-card.default { border-color: var(--primary); background: var(--primary-light); }
+    .address-info p { font-size: 0.875rem; line-height: 1.6; color: var(--text); }
+    .address-info .default-badge { font-size: 0.72rem; font-weight: 700; color: var(--primary); background: white; border: 1px solid var(--primary); padding: 2px 8px; border-radius: 10px; display: inline-block; margin-bottom: 6px; }
+    .address-actions { display: flex; gap: 8px; }
+    .addr-btn { background: none; border: 1px solid var(--border); padding: 5px 12px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: all 0.2s; color: var(--text-muted); }
+    .addr-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .addr-btn.danger:hover { border-color: #dc2626; color: #dc2626; }
+
+    .add-address-btn { width: 100%; border: 2px dashed var(--border); background: none; padding: 14px; border-radius: 10px; font-size: 0.875rem; font-weight: 600; color: var(--text-muted); cursor: pointer; transition: all 0.2s; }
+    .add-address-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+
+    /* ADD ADDRESS FORM */
+    .add-addr-form { border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-top: 12px; display: none; }
+    .add-addr-form.open { display: block; }
+    .add-addr-form h4 { font-size: 0.875rem; font-weight: 700; margin-bottom: 14px; }
+    .addr-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .addr-form-actions { display: flex; gap: 8px; margin-top: 12px; }
+    .cancel-addr-btn { background: none; border: 1px solid var(--border); color: var(--text-muted); padding: 8px 16px; border-radius: 8px; font-size: 0.825rem; font-weight: 600; cursor: pointer; }
+    .cancel-addr-btn:hover { border-color: var(--primary); color: var(--primary); }
+
+    /* NOT LOGGED IN */
+    .not-logged-in { text-align: center; padding: 80px 24px; background: white; border-radius: var(--radius); box-shadow: var(--shadow); }
+    .not-logged-in .icon { font-size: 3rem; margin-bottom: 14px; }
+    .not-logged-in h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+    .not-logged-in p { color: var(--text-muted); font-size: 0.875rem; margin-bottom: 20px; }
+    .btn-primary { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">Shop<span>ora</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Shop</a></li>
+      <li><a href="orders.html">My Orders</a></li>
+      <li><a href="categories.html">Categories</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="cart-btn" onclick="openCart()">
+        🛒 <span class="cart-count" id="cartCount">0</span>
+      </button>
+      <button class="profile-btn" id="profileBtn" onclick="openProfileModal()"></button>
+      <button class="login-btn" id="loginBtn" onclick="openLoginModal()">Sign In</button>
+    </div>
+  </div>
+</nav>
+
+<div id="pageContent"></div>
+
+<!-- LOGIN MODAL -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeLoginModal()">✕</button>
+    <h2>Welcome back</h2>
+    <p class="subtitle">Sign in with your email address</p>
+    <div class="modal-error" id="loginError"></div>
+    <div class="form-group">
+      <label>Email Address</label>
+      <input type="email" id="loginEmail" placeholder="you@example.com" onkeydown="if(event.key==='Enter') submitLogin()" />
+    </div>
+    <button class="modal-submit" onclick="submitLogin()">Sign In</button>
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="modal-overlay" id="profileModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeProfileModal()">✕</button>
+    <div class="profile-header">
+      <div class="profile-avatar" id="profileAvatar"></div>
+      <div class="profile-info">
+        <h3 id="profileName"></h3>
+        <p id="profileEmail"></p>
+      </div>
+    </div>
+    <ul class="profile-menu">
+      <li><a href="orders.html">📦 My Orders</a></li>
+      <li><a href="profile.html">⚙️ My Profile</a></li>
+      <li><button class="logout-btn" onclick="logout()">🚪 Sign Out</button></li>
+    </ul>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/common.js" defer></script>
+<script src="js/profile.js" defer></script>
+</body>
+</html>

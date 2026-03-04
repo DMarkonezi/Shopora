@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using GigatronAplikacija.Models;
-using GigatronAplikacija.Services;
+using Api.Models;
+using Api.Services;
 
-namespace GigatronAplikacija.Controllers
+namespace Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -50,6 +50,24 @@ namespace GigatronAplikacija.Controllers
                 return NotFound($"Narudžbina sa ID-em {id} nije pronađena.");
             }
             return Ok(details);
+        }
+
+        // PATCH: api/Orders/{id}/status
+        [HttpPatch("{id}/status")]
+        public async Task<IActionResult> UpdateStatus(string id, [FromBody] OrderStatus status)
+        {
+            var updated = await _orderService.UpdateStatusAsync(id, status);
+            if (!updated)
+                return NotFound($"Narudžbina sa ID-em {id} nije pronađena.");
+            return Ok(new { Message = $"Status narudžbine uspešno promenjen na {status}." });
+        }
+
+        // GET: api/Orders/status/{status}
+        [HttpGet("status/{status}")]
+        public async Task<ActionResult<List<Order>>> GetByStatus(OrderStatus status)
+        {
+            var orders = await _orderService.GetByStatusAsync(status);
+            return Ok(orders);
         }
     }
 }
