@@ -106,5 +106,23 @@ namespace Api.Controllers
                 return NotFound("Uklanjanje adrese neuspešno. Korisnik ili adresa nisu pronađeni.");
             return Ok("Adresa uspešno uklonjena.");
         }
+
+        [HttpPost("login")]
+        public async Task<ActionResult<User>> Login([FromBody] LoginRequest request)
+        {
+            var user = await _userService.GetByEmailAsync(request.Email);
+            if (user == null)
+                return NotFound("Email nije registrovan.");
+
+            if (user.Password != request.Password)
+                return BadRequest("Pogrešna lozinka.");
+
+            return Ok(user);
+        }
+        public class LoginRequest
+        {
+            public string? Email { get; set; }
+            public string? Password { get; set; }
+        }
     }
 }

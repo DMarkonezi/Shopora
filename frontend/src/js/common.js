@@ -46,14 +46,30 @@ function closeLoginModal() {
 
 async function submitLogin() {
   const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value;
+
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     showError("loginError", "Please enter a valid email address.");
     return;
   }
 
+  if (!password) {
+    showError("loginError", "Please enter your password.");
+    return;
+  }
+
   try {
-    const res = await fetch(`${BASE_URL}/users/email/${encodeURIComponent(email)}`);
-    if (!res.ok) { showError("loginError", "No account found with that email."); return; }
+    const res = await fetch(`${BASE_URL}/users/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      showError("loginError", err.message || "Invalid email or password.");
+      return;
+    }
 
     const user = await res.json();
     localStorage.setItem("shopora_user", JSON.stringify(user));
@@ -61,7 +77,6 @@ async function submitLogin() {
     updateNavForUser(user);
     showToast(`Welcome back, ${user.firstName || "there"}! 👋`, "success");
 
-    // ako je stranica tražila login, reload da se prikaže sadržaj
     setTimeout(() => window.location.reload(), 800);
   } catch {
     showError("loginError", "Something went wrong. Try again.");
